@@ -1,5 +1,53 @@
 const std = @import("std");
 
+
+pub const Rectangle = struct {
+    const Self = @This();
+    area: i64,
+    min_x: i64,
+    max_x: i64,
+    min_y: i64,
+    max_y: i64,
+
+    pub fn init(a: Point2D(i64), b: Point2D(i64)) Rectangle {
+        var rectangle = Rectangle{
+            .area = 0,
+            .min_x = @min(a.x, b.x),
+            .max_x = @max(a.x, b.x),
+            .min_y = @min(a.y, b.y),
+            .max_y = @max(a.y, b.y),
+        };
+        rectangle.set_area();
+        return rectangle;
+    }
+
+    pub fn set_area(self: *Self) void {
+        self.area = (self.max_x - self.min_x + 1) * (self.max_y - self.min_y + 1);
+    }
+
+    pub fn overlaps(self: Self, other: Self) bool {
+        const x_overlaps = @max(self.min_x, other.min_x) <= @min(self.max_x, other.max_x);
+        const y_overlaps = @max(self.min_y, other.min_y) <= @min(self.max_y, other.max_y);
+        return x_overlaps and y_overlaps;
+    }
+
+    pub fn lessThanArea(_: void, a: Rectangle, b: Rectangle) bool {
+        return a.area < b.area;
+    }
+
+    pub fn shrink(self: Self) Rectangle {
+        var rectangle: Rectangle = .{
+            .area = 0,
+            .min_x = self.min_x + 1,
+            .max_x = self.max_x - 1,
+            .min_y = self.min_y + 1,
+            .max_y = self.max_y - 1,
+        };
+        rectangle.set_area();
+        return rectangle;
+    }
+};
+
 pub fn Point2D(comptime T: type) type {
     return struct {
         const Self = @This();
@@ -46,7 +94,7 @@ pub fn @"2D"(comptime T: type) type {
         }
 
         pub fn findPoint(self: Self, item: T) ?Point2D(isize) {
-            const idx =  std.mem.indexOfScalar(T, self.items, item) orelse return null;
+            const idx = std.mem.indexOfScalar(T, self.items, item) orelse return null;
             return self.indexToCoords(idx);
         }
 
@@ -65,7 +113,7 @@ pub fn @"2D"(comptime T: type) type {
             return (y * self.width) + x;
         }
 
-        pub fn inBoundsPoint(self: Self,point: Point2D(isize)) bool {
+        pub fn inBoundsPoint(self: Self, point: Point2D(isize)) bool {
             if (point.x < 0 or point.y < 0) return false;
             return self.inBounds(@intCast(point.x), @intCast(point.y));
         }
@@ -86,7 +134,7 @@ pub fn @"2D"(comptime T: type) type {
             self.items[self.getIndex(@intCast(point.x), @intCast(point.y))] = value;
         }
 
-        pub fn getPoint(self: Self,point: Point2D(isize)) ?T {
+        pub fn getPoint(self: Self, point: Point2D(isize)) ?T {
             if (!self.inBoundsPoint(point)) return null;
             return self.items[self.getIndex(@intCast(point.x), @intCast(point.y))];
         }

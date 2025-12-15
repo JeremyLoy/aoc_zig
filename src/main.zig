@@ -72,8 +72,8 @@ pub fn main() !void {
         problems_2.deinit(allocator);
     }
 
-    total += try aoc.helpers.timeIt("6-1", aoc.year2025.day_6.part1, .{ problems.items });
-    total += try aoc.helpers.timeIt("6-2", aoc.year2025.day_6.part2, .{ problems_2.items });
+    total += try aoc.helpers.timeIt("6-1", aoc.year2025.day_6.part1, .{problems.items});
+    total += try aoc.helpers.timeIt("6-2", aoc.year2025.day_6.part2, .{problems_2.items});
 
     var manifold = try aoc.year2025.day_7.parseInput(allocator, day_7_input);
     defer manifold.deinit(allocator);
@@ -81,11 +81,12 @@ pub fn main() !void {
     total += try aoc.helpers.timeIt("7-1", aoc.year2025.day_7.part1, .{ allocator, &manifold });
     total += try aoc.helpers.timeIt("7-2", aoc.year2025.day_7.part2, .{ allocator, manifold });
 
-    var red_tiles = try aoc.year2025.day_9.parseInput(allocator, day_9_input);
+    var red_tiles, var perimeter = try aoc.year2025.day_9.parseInput(allocator, day_9_input);
     defer red_tiles.deinit(allocator);
+    defer perimeter.deinit(allocator);
 
     total += try aoc.helpers.timeIt("9-1", aoc.year2025.day_9.part1, .{red_tiles.items});
-    // total += try aoc.helpers.timeIt("9-2", aoc.year2025.day_9.part2, .{allocator, red_tiles.items});
+    total += try aoc.helpers.timeIt("9-2", aoc.year2025.day_9.part2, .{ red_tiles.items, perimeter.items });
 
     var server_rack = try aoc.year2025.day_11.parseInput(allocator, day_11_input);
     defer server_rack.deinit(allocator);
@@ -96,7 +97,7 @@ pub fn main() !void {
     var farm = try aoc.year2025.day_12.parseInput(allocator, day_12_input);
     defer farm.deinit(allocator);
 
-    total += try aoc.helpers.timeIt("12-1", aoc.year2025.day_12.part1, .{farm });
+    total += try aoc.helpers.timeIt("12-1", aoc.year2025.day_12.part1, .{farm});
 
     std.debug.print("Total taken: {d:.3} ms\n", .{@as(f64, @floatFromInt(total)) / 1_000_000.0});
 }
