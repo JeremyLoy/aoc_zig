@@ -14,7 +14,6 @@ pub const year2025 = struct {
 };
 
 pub const helpers = @import("helpers.zig");
-pub const types = @import("types/types.zig");
 pub const grid = @import("types/grid.zig");
 
 test {
