@@ -1,23 +1,23 @@
-//! By convention, root.zig is the root source file when making a library.
 const std = @import("std");
 
-pub fn bufferedPrint() !void {
-    // Stdout is for the actual output of your application, for example if you
-    // are implementing gzip, then only the compressed bytes should be sent to
-    // stdout, not any debugging messages.
-    var stdout_buffer: [1024]u8 = undefined;
-    var stdout_writer = std.fs.File.stdout().writer(&stdout_buffer);
-    const stdout = &stdout_writer.interface;
+pub const year2025 = struct {
+    pub const day_1 = @import("2025/day_1.zig");
+    pub const day_2 = @import("2025/day_2.zig");
+    pub const day_3 = @import("2025/day_3.zig");
+    pub const day_4 = @import("2025/day_4.zig");
+    pub const day_5 = @import("2025/day_5.zig");
+    pub const day_6 = @import("2025/day_6.zig");
+    pub const day_7 = @import("2025/day_7.zig");
+    pub const day_9 = @import("2025/day_9.zig");
+    pub const day_11 = @import("2025/day_11.zig");
+    pub const day_12 = @import("2025/day_12.zig");
+};
 
-    try stdout.print("Run `zig build test` to run the tests.\n", .{});
+pub const helpers = @import("helpers.zig");
+pub const types = @import("types/types.zig");
+pub const grid = @import("types/grid.zig");
 
-    try stdout.flush(); // Don't forget to flush!
-}
-
-pub fn add(a: i32, b: i32) i32 {
-    return a + b;
-}
-
-test "basic add functionality" {
-    try std.testing.expect(add(3, 7) == 10);
+test {
+    std.testing.refAllDecls(@This());
+    std.testing.refAllDecls(year2025);
 }
