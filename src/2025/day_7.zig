@@ -1,7 +1,6 @@
 const std = @import("std");
 const helpers = @import("../helpers.zig");
 const grid = @import("../types/grid.zig");
-const types = @import("../types/types.zig");
 
 const sample =
     \\.......S.......
@@ -79,13 +78,12 @@ pub fn parseInput(allocator: std.mem.Allocator, input: []const u8) !grid.@"2D"(M
 }
 
 pub fn part1(allocator: std.mem.Allocator, manifold: *grid.@"2D"(ManifoldPoint)) !u64 {
-    var queue = types.RingBuffer(grid.Point2D(isize)).empty;
+    var queue = std.Deque(grid.Point2D(isize)).empty;
     defer queue.deinit(allocator);
     const start = manifold.findPoint(.start) orelse return error.CouldNotFindStart;
-    try queue.enqueue(allocator,  start);
+    try queue.pushBack(allocator,  start);
     var splitters: u64 = 0;
-    var current = queue.dequeue();
-    queue: while (current) |c| : (current = queue.dequeue()) {
+    queue: while (queue.popFront()) |c| {
         var next = grid.Point2D(isize){ .x = c.x, .y = c.y + 1 };
         while (manifold.inBoundsPoint(next)) : (next.y += 1) {
             switch (manifold.getPoint(next).?) {
@@ -94,8 +92,8 @@ pub fn part1(allocator: std.mem.Allocator, manifold: *grid.@"2D"(ManifoldPoint))
                 },
                 .splitter => {
                     splitters += 1;
-                    try queue.enqueue(allocator, grid.Point2D(isize){ .x = next.x - 1, .y = next.y });
-                    try queue.enqueue(allocator,  grid.Point2D(isize){ .x = next.x + 1, .y = next.y });
+                    try queue.pushBack(allocator, grid.Point2D(isize){ .x = next.x - 1, .y = next.y });
+                    try queue.pushBack(allocator,  grid.Point2D(isize){ .x = next.x + 1, .y = next.y });
                     continue :queue;
                 },
                 .start => return error.EncounteredSecondStart,
