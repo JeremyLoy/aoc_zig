@@ -1,6 +1,5 @@
 const std = @import("std");
 
-
 pub const Rectangle = struct {
     const Self = @This();
     area: i64,
@@ -53,6 +52,33 @@ pub fn Point2D(comptime T: type) type {
         const Self = @This();
         x: T,
         y: T,
+    };
+}
+
+pub fn Point3D(comptime T: type) type {
+    return struct {
+        const Self = @This();
+        x: T,
+        y: T,
+        z: T,
+
+        fn asFloat(comptime R: type, val: anytype) R {
+            return switch (@typeInfo(T)) {
+                .int, .comptime_int => @floatFromInt(val),
+                .float, .comptime_float => @floatCast(val),
+                else => @compileError("Point coordinates must be numbers"),
+            };
+        }
+
+        pub fn euclid_distance( self: Self, comptime R: type, other: Self) R {
+            // 1. Convert inputs to the return type (R) immediately
+            //    This handles i64 -> f64 conversion safely.
+            const dx = asFloat(R, self.x) - asFloat(R, other.x);
+            const dy = asFloat(R, self.y) - asFloat(R, other.y);
+            const dz = asFloat(R, self.z) - asFloat(R, other.z);
+
+            return @sqrt((dx * dx) + (dy * dy) + (dz * dz));
+        }
     };
 }
 

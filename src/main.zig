@@ -18,6 +18,8 @@ pub fn main() !void {
     defer allocator.free(day_6_input);
     const day_7_input = try aoc.helpers.readInputFile(allocator, "input/2025/7.txt");
     defer allocator.free(day_7_input);
+    const day_8_input = try aoc.helpers.readInputFile(allocator, "input/2025/8.txt");
+    defer allocator.free(day_8_input);
     const day_9_input = try aoc.helpers.readInputFile(allocator, "input/2025/9.txt");
     defer allocator.free(day_9_input);
     const day_11_input = try aoc.helpers.readInputFile(allocator, "input/2025/11.txt");
@@ -80,6 +82,12 @@ pub fn main() !void {
 
     total += try aoc.helpers.timeIt("7-1", aoc.year2025.day_7.part1, .{ allocator, &manifold });
     total += try aoc.helpers.timeIt("7-2", aoc.year2025.day_7.part2, .{ allocator, manifold });
+
+    var points = try aoc.year2025.day_8.parseInput(allocator, day_8_input);
+    defer points.deinit(allocator);
+
+    total += try aoc.helpers.timeIt("8-1", aoc.year2025.day_8.part1, .{ allocator, points.items, 1_000 });
+    total += try aoc.helpers.timeIt("8-2", aoc.year2025.day_8.part2, .{ allocator, points.items });
 
     var red_tiles, var perimeter = try aoc.year2025.day_9.parseInput(allocator, day_9_input);
     defer red_tiles.deinit(allocator);
